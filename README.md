@@ -27,7 +27,7 @@ The library operates on short Weierstrass curves defined by $y^2 = x^3 + ax + b$
 
 ### Scalar Multiplication Algorithms
 1.  **Fixed-Base (Generator)**:
-    Since the generator is constant, the library utilizes a precomputed table of $[2^i]G$ for $i \in [0, 255]$. Scalar multiplication is reduced to a maximum of 256 additions, eliminating doubling operations during execution.
+    Since the generator for a group on a fixed elliptic curve is constant, the library utilizes a precomputed table of $[2^i]G$ for $i \in [0, 255]$. Scalar multiplication is reduced to a maximum of 256 additions, eliminating doubling operations during execution.
 2.  **Variable-Base (Arbitrary Point)**:
     Uses a 4-bit window (nibble-based) approach. A small local table of $16$ points ($[0]P \dots [15]P$) is generated on-the-fly. The scalar is processed from most-significant to least-significant nibble, performing 4 doublings and 1 addition per nibble.
 
