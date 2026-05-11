@@ -19,8 +19,8 @@ This library provides core elliptic curve primitives and optimized multiplicatio
 ## Supported Curves
 | Curve | Field | Use Case |
 | --- | --- | --- |
-| **STARK252** | $2^{251} + 17 \cdot 2^{192} + 1$ | Starknet, ZK-STARKs, AIR/FRI |
-| **NIST P-256** | $2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$ | TLS/SSL, Secure Enclaves, WebAuthn |
+| **STARK252** | $2^{251} + 17 \cdot 2^{192} + 1$ | Starknet, ZK-STARKs, FRI |
+| **NIST P-256** | $2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$ | TLS/SSL, WebAuthn |
 
 ## Mathematical Implementation
 The library operates on short Weierstrass curves defined by $y^2 = x^3 + ax + b$.
