@@ -9,21 +9,72 @@
 A modular Rust implementation of Elliptic Curve arithmetic over the **STARK252** and **NIST P-256** prime fields.
 
 ## Features
-This library provides core elliptic curve primitives and optimized multiplication algorithms:
+This library provides core elliptic curve primitives and optimized multiplication algorithms for Weierstrass curves, i.e $y^2 = x^3 + ax + b$.:
 
 *   **Group Operations**: Affine coordinate implementation of point addition and point doubling.
 *   **Fixed-Base Multiplication**: Efficient scalar multiplication for the curve generator using precomputed power-of-two tables ($2^i \cdot G$).
 *   **Variable-Base Multiplication**: Scalar multiplication for arbitrary points using a 4-bit (radix-16) windowed method to reduce the number of point additions.
 *   **Trait-Based Architecture**: Extensible design using the `CurveConfig` trait, allowing for the addition of new curves by defining field parameters and generator coordinates.
 
-## Supported Curves
+## Already supported Curves
 | Curve | Field | Use Case |
 | --- | --- | --- |
 | **STARK252** | $2^{251} + 17 \cdot 2^{192} + 1$ | Starknet, ZK-STARKs, FRI |
 | **NIST P-256** | $2^{256} - 2^{224} + 2^{192} + 2^{96} - 1$ | TLS/SSL, WebAuthn |
 
-## Mathematical Implementation
-The library operates on short Weierstrass curves defined by $y^2 = x^3 + ax + b$.
+
+## Using the library for your own curves!
+
+```rust
+extern crate elliptic_ops;
+extern crate num_bigint;
+extern crate ff;
+
+
+use self::ff::PrimeField;
+use self::num_bigint::BigUint;
+use elliptic_ops::point::{Point, CurveConfig};
+
+use sha1::{Sha1, Digest};
+
+// Small toy prime field
+#[derive(PrimeField)]
+#[PrimeFieldModulus = "9739"]
+#[PrimeFieldGenerator = "7"]
+#[PrimeFieldReprEndianness = "little"]
+pub struct Fch([u64; 1]);
+
+impl CurveConfig for Fch {
+    fn a() -> Self { Self::from_str_vartime("497").unwrap() }
+    fn b() -> Self { Self::from_str_vartime("1768").unwrap() }
+    fn g_x() -> Self { Self::from_str_vartime("1804").unwrap() }
+    fn g_y() -> Self { Self::from_str_vartime("5368").unwrap() }
+    fn n() -> BigUint { BigUint::from(0u32) }
+}
+
+fn display_point<F: CurveConfig>(p : &Point<F>) {
+    if let Point::Affine { x, y } = p {
+        let x_repr = x.to_repr(); 
+        let x_biguint = BigUint::from_bytes_le(x_repr.as_ref());
+        let y_repr = y.to_repr(); 
+        let y_biguint = BigUint::from_bytes_le(y_repr.as_ref());
+        println!("Total X: {:?}", x_biguint);
+        println!("Total Y: {:?}", y_biguint);
+    } else {
+        println!("Total is Point at Infinity");
+    }
+}
+
+fn main() {
+    println!("Point addition");
+    let p = Point::<Fch>::Affine { x: Fch::from_str_vartime("493").unwrap(), y: Fch::from_str_vartime("5564").unwrap() };
+    let q = Point::<Fch>::Affine { x: Fch::from_str_vartime("1539").unwrap(), y: Fch::from_str_vartime("4742").unwrap() };
+    let r = Point::<Fch>::Affine { x: Fch::from_str_vartime("4403").unwrap(), y: Fch::from_str_vartime("5202").unwrap() };
+    let total = p.add(&p).add(&q).add(&r);
+
+    display_point(&total);
+}
+```
 
 ### Scalar Multiplication Algorithms
 1.  **Fixed-Base (Generator)**:
