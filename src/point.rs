@@ -133,6 +133,18 @@ impl<F: CurveConfig> Point<F> {
         }
         res
     }
+
+    pub fn display(&self) -> String {
+        if let Point::Affine { x, y } = self {
+            let x_repr = x.to_repr(); 
+            let x_biguint = BigUint::from_bytes_le(x_repr.as_ref());
+            let y_repr = y.to_repr(); 
+            let y_biguint = BigUint::from_bytes_le(y_repr.as_ref());
+            format!("Point(x: {:?}, y: {:?})", x_biguint, y_biguint)
+        } else {
+            format!("O")
+        }
+    }
 }
 
 

@@ -30,12 +30,9 @@ extern crate elliptic_ops;
 extern crate num_bigint;
 extern crate ff;
 
-
 use self::ff::PrimeField;
 use self::num_bigint::BigUint;
 use elliptic_ops::point::{Point, CurveConfig};
-
-use sha1::{Sha1, Digest};
 
 // Small toy prime field
 #[derive(PrimeField)]
@@ -52,19 +49,6 @@ impl CurveConfig for Fch {
     fn n() -> BigUint { BigUint::from(0u32) }
 }
 
-fn display_point<F: CurveConfig>(p : &Point<F>) {
-    if let Point::Affine { x, y } = p {
-        let x_repr = x.to_repr(); 
-        let x_biguint = BigUint::from_bytes_le(x_repr.as_ref());
-        let y_repr = y.to_repr(); 
-        let y_biguint = BigUint::from_bytes_le(y_repr.as_ref());
-        println!("Total X: {:?}", x_biguint);
-        println!("Total Y: {:?}", y_biguint);
-    } else {
-        println!("Total is Point at Infinity");
-    }
-}
-
 fn main() {
     println!("Point addition");
     let p = Point::<Fch>::Affine { x: Fch::from_str_vartime("493").unwrap(), y: Fch::from_str_vartime("5564").unwrap() };
@@ -72,7 +56,7 @@ fn main() {
     let r = Point::<Fch>::Affine { x: Fch::from_str_vartime("4403").unwrap(), y: Fch::from_str_vartime("5202").unwrap() };
     let total = p.add(&p).add(&q).add(&r);
 
-    display_point(&total);
+    print!(total.display());
 }
 ```
 
