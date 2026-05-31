@@ -135,7 +135,9 @@ impl<F: CurveConfig> Point<F> {
         }
         res
     }
+}
 
+impl<F: CurveConfig> fmt::Display for Point<F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Point::Affine { x, y } => {
