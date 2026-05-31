@@ -7,6 +7,8 @@ use self::num_bigint::BigUint;
 use crate::fp::stark::FStark;
 use crate::fp::nist::Fp;
 
+use std::fmt;
+
 pub trait CurveConfig: PrimeField {
     fn a() -> Self;
     fn b() -> Self;
@@ -134,15 +136,17 @@ impl<F: CurveConfig> Point<F> {
         res
     }
 
-    pub fn display(&self) -> String {
-        if let Point::Affine { x, y } = self {
-            let x_repr = x.to_repr(); 
-            let x_biguint = BigUint::from_bytes_le(x_repr.as_ref());
-            let y_repr = y.to_repr(); 
-            let y_biguint = BigUint::from_bytes_le(y_repr.as_ref());
-            format!("Point(x: {:?}, y: {:?})", x_biguint, y_biguint)
-        } else {
-            format!("O")
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Point::Affine { x, y } => {
+                let x_repr = x.to_repr(); 
+                let x_biguint = BigUint::from_bytes_le(x_repr.as_ref());
+                let y_repr = y.to_repr(); 
+                let y_biguint = BigUint::from_bytes_le(y_repr.as_ref());
+                
+                write!(f, "Point(x: {}, y: {})", x_biguint, y_biguint)
+            }
+            Point::Infinity => write!(f, "O"),
         }
     }
 }

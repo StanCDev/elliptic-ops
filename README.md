@@ -56,7 +56,7 @@ fn main() {
     let r = Point::<Fch>::Affine { x: Fch::from_str_vartime("4403").unwrap(), y: Fch::from_str_vartime("5202").unwrap() };
     let total = p.add(&p).add(&q).add(&r);
 
-    print!(total.display());
+    println!("The result is: {}", total);
 }
 ```
 
